@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Coin {
+  symbol String @id
+  candles Candle[]
+}
+
+model Candle {
+  openTime DateTime
+  open String
+  high String
+  low String
+  close String
+  volume String
+  closeTime DateTime
+  quoteAssetVolume String
+  trades Int
+  baseAssetVolume String
+  symbol String
+  coin Coin @relation(fields: [symbol], references: [symbol], onDelete: Cascade, onUpdate: Cascade)
+  @@id([openTime, closeTime])
+}
+
+
+
+model ShortOpportunity {
+  id String @id  @default(uuid())
+  initialPrice String
+  finalPrice String
+  highPercentage String
+  averageChange String
+  gainTime DateTime[]
+  gainPercentage String[]
+  symbol String
+  shorts Short[]
+}
+
+model Short {
+  id String @id  @default(uuid())
+  shortOportunityId String
+  time DateTime
+  price String
+  volume String
+  actualPercentage String
+  shortOportunity ShortOpportunity @relation(fields: [shortOportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
